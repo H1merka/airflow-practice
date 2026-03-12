@@ -1,4 +1,3 @@
-# airflow_pipe.py
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -10,7 +9,7 @@ from pathlib import Path
 import os
 
 # Импорт функции train (из train_model.py)
-from train_model import train
+from train_model_new import train
 
 RAW_URL = "https://raw.githubusercontent.com/sumit0072/Car-Price-Prediction-Project/main/car%20data.csv"
 LOCAL_RAW = "cars.csv"
@@ -103,7 +102,7 @@ def clear_data():
 
     # One-Hot encode категориальные колонки
     if len(cat_cols) > 0:
-        ohe = OneHotEncoder(sparse=False, handle_unknown='ignore')
+        ohe = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
         ohe_arr = ohe.fit_transform(df[cat_cols])
         ohe_cols = list(ohe.get_feature_names_out(cat_cols))
         df_ohe = pd.DataFrame(ohe_arr, columns=ohe_cols, index=df.index)
@@ -120,8 +119,8 @@ def clear_data():
 dag_cars = DAG(
     dag_id="train_pipe_cardekho",
     start_date=datetime(2025, 2, 3),
-    concurrency=4,
-    schedule_interval=timedelta(minutes=5),
+    max_active_tasks=4,
+    schedule=timedelta(minutes=5),
     max_active_runs=1,
     catchup=False,
 )
